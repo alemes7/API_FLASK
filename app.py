@@ -29,7 +29,7 @@ def listarTarefas():
 
 @app.route("/add", methods=['POST'])
 def addTarefas():
-    item = request.json  
+    item = request.json
     tarefas = pd.read_csv('Text.csv')
     tarefas = tarefas.to_dict('records') 
     id = len(tarefas) + 1
@@ -39,7 +39,6 @@ def addTarefas():
     tarefas = pd.read_csv('Text.csv')
     tarefas = tarefas.to_dict('records')        
     return jsonify(tarefas)
-
 
 #################### ATUALIZAR (PUT) ####################
 
@@ -61,14 +60,17 @@ def updateTarefas(id):
 
 #################### DELETAR (DELETE) ####################
 
-@app.route("/delete/<int:id>", methods=['DELETE'])
-def deleteTarefas(id):
+@app.route('/delete/<int:id>', methods=['DELETE'])
+def delete_user(id):
     tarefas = pd.read_csv('Text.csv')
-    tarefas = tarefas[tarefas['ID'] != id].reset_index(drop=True)
-    tarefas['ID'] = range(1, len(tarefas) + 1)
-    tarefas.to_csv('Text.csv', index=False)
-    return jsonify(tarefas.to_dict('records'))
 
+    if id in tarefas['ID'].values:
+        tarefas = tarefas[tarefas['ID'] != id]
+        tarefas['ID'] = range (1, len(tarefas) + 1)
+
+        tarefas.to_csv('Text.csv', index=False)
+        return "Tarefa excluida com sucesso"
+    return "Id não encontrada"
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
